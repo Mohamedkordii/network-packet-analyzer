@@ -1,51 +1,32 @@
 from scapy.all import sniff, IP, TCP, UDP, ICMP
 
-
 def analyze_packet(packet):
-print("\n" + "=" * 60)
+    print("\n" + "=" * 60)
 
-# Check if the packet contains an IP layer
-if IP in packet:
-source_ip = packet[IP].src
-destination_ip = packet[IP].dst
+    if IP in packet:
+        print(f"Source IP: {packet[IP].src}")
+        print(f"Destination IP: {packet[IP].dst}")
 
-print(f"Source IP: {source_ip}")
-print(f"Destination IP: {destination_ip}")
+        if TCP in packet:
+            print("Protocol: TCP")
+            print(f"Source Port: {packet[TCP].sport}")
+            print(f"Destination Port: {packet[TCP].dport}")
 
-# Check for TCP traffic
-if TCP in packet:
-print("Protocol: TCP")
-print(f"Source Port: {packet[TCP].sport}")
-print(f"Destination Port: {packet[TCP].dport}")
+        elif UDP in packet:
+            print("Protocol: UDP")
+            print(f"Source Port: {packet[UDP].sport}")
+            print(f"Destination Port: {packet[UDP].dport}")
 
-# Check for UDP traffic
-elif UDP in packet:
-print("Protocol: UDP")
-print(f"Source Port: {packet[UDP].sport}")
-print(f"Destination Port: {packet[UDP].dport}")
+        elif ICMP in packet:
+            print("Protocol: ICMP")
 
-# Check for ICMP traffic
-elif ICMP in packet:
-print("Protocol: ICMP")
-
-else:
-print(f"Protocol Number: {packet[IP].proto}")
-
-else:
-print("Non-IP packet detected.")
-
+        else:
+            print(f"Protocol Number: {packet[IP].proto}")
 
 def main():
-print("Network Packet Analyzer")
-print("Capturing packets... Press Ctrl+C to stop.\n")
-
-try:
-sniff(prn=analyze_packet, store=False)
-except KeyboardInterrupt:
-print("\nPacket capture stopped.")
-except PermissionError:
-print("\nPermission denied. Try running the program with administrator/root privileges.")
-
+    print("Network Packet Analyzer")
+    print("Capturing packets... Press Ctrl+C to stop.\n")
+    sniff(prn=analyze_packet, store=False, count=10)
 
 if __name__ == "__main__":
-main()
+    main()
